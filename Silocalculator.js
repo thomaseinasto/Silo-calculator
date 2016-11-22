@@ -45,8 +45,9 @@ else{
   
   sensornum[i] = parseInt(splitinfo[i][j], 16); // SensorNo to DEC
   if (sensornum[i] == 69) { // If overcurrent on silo line
-   sensornum[i] = 0 //Sensor No = 0
-  q += sensornum[i]; // Add 0 to sensors
+   sensornum[i] = 5 //Sensor No = 5
+   eval('Error.set(true)');
+  q += sensornum[i]; // Add 5 to sensors
 }else{               // If no problems
   q += sensornum[i]; // Add sensor No to sensors
   i++;
