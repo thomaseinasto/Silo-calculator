@@ -44,9 +44,13 @@ else{
   j++;
   
   sensornum[i] = parseInt(splitinfo[i][j], 16); // SensorNo to DEC
-  q += sensornum[i]; // How many sensors?
+  if (sensornum[i] == 69) { // If overcurrent on silo line
+   sensornum[i] = 0 //Sensor No = 0
+  q += sensornum[i]; // Add 0 to sensors
+}else{               // If no problems
+  q += sensornum[i]; // Add sensor No to sensors
   i++;
-  while(i<silocabletemperatures.value); // Until Recognized temperature cables
+  }while(i<silocabletemperatures.value); // Until Recognized temperature cables
 
 
   // Change temperature data to DEC and put temperature data to arrays 
