@@ -1,5 +1,5 @@
 // Silo temperature assigner
-// Evikontroll Systems Ltd. 2016
+// © Evikontroll Systems Ltd. 2016
 function SilotemperatureCalcuator(descriptionutf,temperatureutf,silocabletemperatures){
   var i = 0;
   var q = 0;
@@ -8,9 +8,12 @@ function SilotemperatureCalcuator(descriptionutf,temperatureutf,silocabletempera
   var t = 0;
   var allinfo,singleinfo,tempinfo,singletempinfo, splitinfo=[], id=[], sensornum=[],temperature=[],appendID,sensor1,hex,g,r;
 
-if (silocabletemperatures.value===0){
-
+if (silocabletemperatures.value===0){ // If no cables detected 
+   eval('nosensors.set(true)'); // Declare that no sensors were gathered 
 }
+else if(silocabletemperatures.value == 3072){ // If cable has overcurrent    --Should be replaced with errorbits!!
+	eval('mLanline.set(true)'); // Declare that mLan line is on overcurrent
+	}
 else{
   	// UTF-16 TO HEX Description
       var hexeddescription = "";
@@ -44,10 +47,11 @@ else{
   j++;
   
   sensornum[i] = parseInt(splitinfo[i][j], 16); // SensorNo to DEC
-  if (sensornum[i] == 69) { // If overcurrent on silo line
-   sensornum[i] = 5 //Sensor No = 5
-   eval('Error.set(true)');
-  q += sensornum[i]; // Add 5 to sensors
+  if (sensornum[i] == 69) { // If overcurrent on silo cable and sensorNo = 5
+   sensornum[i] = 5; //Sensor No = 5 and known that temperatures are FFFF
+   eval('Error.set(true)'); // Rise error point
+   eval('Errorcable.set('id[i]' is broken)'); //Declare what ID is broken
+  q += sensornum[i]; // Add x No to sensor No 
 }else{               // If no problems
   q += sensornum[i]; // Add sensor No to sensors
   i++;
@@ -56,10 +60,15 @@ else{
 
   // Change temperature data to DEC and put temperature data to arrays 
   do {
+	
       temperature[z] = parseInt(singletempinfo[z], 16); // Temp to DEC
-      if (temperature[z] > 32000 ) {
-     temperature[z] = temperature[z] - 65535;
-                                                     }
+      if (temperature[z] > 32000 ) { // If temperature is < 0
+	  if (singletempinfo[z] == 65535) { // If RAW Temperature is FFFF
+	  temperature[z] = 99;           // Error code is 99
+	  }else{						 // If temperature is < 0
+     temperature[z] = temperature[z] - 65535; //Signed value of HEX
+      }                                               
+	  }
   	z++;
   } while (z<q); //Until sensor number
 
