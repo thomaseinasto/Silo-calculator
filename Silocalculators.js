@@ -1,6 +1,6 @@
 // Silo temperature assigner
-// © Evikontroll Systems Ltd. 2016
-function SilotemperatureCalcuatoring(descriptionutf,temperatureutf,silocabletemperatures,noslaves,shortcircuit,cablesensorNo){
+// Evikontroll Systems Ltd. 2016
+function SilotemperatureCalcuator(descriptionutf,temperatureutf,silocabletemperatures){
   var i = 0;
   var q = 0;
   var z = 0;
@@ -8,14 +8,9 @@ function SilotemperatureCalcuatoring(descriptionutf,temperatureutf,silocabletemp
   var t = 0;
   var allinfo,singleinfo,tempinfo,singletempinfo, splitinfo=[], id=[], sensornum=[],temperature=[],appendID,sensor1,hex,g,r;
 
-if (noslaves.value === true){ // If no cables detected 
-   eval('nosensors.set(true)');   // Declare that no sensors were gathered 
-	return 'No Slaves Detected';
-   }
-else if(shortcircuit.value === true){ // If cable has overcurrent    --Should be replaced with errorbits!!
-	eval('mLanline.set(true)'); // Declare that mLan line is on overcurrent
-	return 'Short Circuit Detected';
-	}
+if (silocabletemperatures.value===0){
+
+}
 else{
   	// UTF-16 TO HEX Description
       var hexeddescription = "";
@@ -47,31 +42,19 @@ else{
 
   id[i] = parseInt(splitinfo[i][j], 16); // ID to DEC
   j++;
-  
   sensornum[i] = parseInt(splitinfo[i][j], 16); // SensorNo to DEC
-  if (sensornum[i] > cablesensorNo) { // If overcurrent on silo cable and sensorNo = 5
-   sensornum[i] = cablesensorNo; //Sensor No = 5 and known that temperatures are FFFF
-   eval('Error.set(true)'); // Rise error point
-   eval('Errorcable.set('+id[i]+' is broken)'); //Declare what ID is broken
-  q += sensornum[i]; // Add x No to sensor No 
-}else{               // If no problems
-  q += sensornum[i]; // Add sensor No to sensors
+
+  q += sensornum[i]; // How many sensors?
   i++;
-  }
   }while(i<silocabletemperatures.value); // Until Recognized temperature cables
 
 
   // Change temperature data to DEC and put temperature data to arrays 
   do {
-	
       temperature[z] = parseInt(singletempinfo[z], 16); // Temp to DEC
-      if (temperature[z] > 32000 ) { // If temperature is < 0
-	  if (singletempinfo[z] == 65535) { // If RAW Temperature is FFFF
-	  temperature[z] = 99;           // Error code is 99
-	  }else{						 // If temperature is < 0
-     temperature[z] = temperature[z] - 65535; //Signed value of HEX
-      }                                               
-	  }
+      if (temperature[z] > 32000 ) {
+     temperature[z] = temperature[z] - 65535;
+                                                     }
   	z++;
   } while (z<q); //Until sensor number
 
@@ -90,9 +73,11 @@ else{
 }
   x++;
   t++;
-  }while (x<(cablesensorNo+1)); // How many sensors?
+  }while (x<6); //Known that 4 sensors on cables 
   y++;
   }while (y<silocabletemperatures.value); // Until points
   }while (t<q);
 }
-}    
+}
+
+    
