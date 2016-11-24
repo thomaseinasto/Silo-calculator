@@ -12,6 +12,7 @@ function SilotemperatureCalcuatoring(descriptionutf,temperatureutf,silocabletemp
 if(noslaves.value === true && shortcircuit.value === true){ //After starting no slaves and shortcircuit 
 eval('nosensorsID'+controllerID+'.set(true)'); //Controller ID error
 eval('mLanlineID'+controllerID+'.set(true)');  // Controller ID Error
+eval('ErrorID'+controllerID+'.set(true)'); // Rise error point
 // English grammar
 if (lineNo == 1) {
 eval('ErrorcableID'+controllerID+'.set("'+lineNo+'-st line '+IDinLine+' is not working!")');
